@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Video Script Manager</title>
 
 <style>
@@ -14,32 +15,45 @@ body {
 
 /* HOME */
 #home {
-    padding: 20px;
+    padding: 12px;
 }
 
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 10px;
+}
+
+h2 {
+    font-size: 18px;
+    margin: 0;
 }
 
 .new-btn {
     background: #22c55e;
     color: white;
-    padding: 10px 15px;
+    padding: 10px;
     border: none;
-    border-radius: 8px;
-    cursor: pointer;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 14px;
 }
 
+/* SCRIPT CARDS */
 .card {
     background: #1e293b;
-    padding: 15px;
+    padding: 12px;
     margin-top: 10px;
-    border-radius: 10px;
+    border-radius: 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 10px;
+}
+
+.card-content {
+    flex: 1;
 }
 
 .card:hover {
@@ -47,63 +61,72 @@ body {
 }
 
 .date {
-    font-size: 12px;
+    font-size: 11px;
     color: #94a3b8;
+    margin-top: 3px;
 }
 
-/* DELETE BUTTON */
+/* DELETE */
 .delete-btn {
     background: #ef4444;
     color: white;
     border: none;
     padding: 8px 10px;
-    border-radius: 6px;
-    cursor: pointer;
+    border-radius: 8px;
+    font-size: 12px;
 }
 
 /* EDITOR */
 #editor {
     display: none;
-    padding: 20px;
+    padding: 12px;
 }
 
-input, textarea {
+input {
     width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    border-radius: 8px;
+    padding: 12px;
+    border-radius: 10px;
     border: none;
-    outline: none;
     font-size: 16px;
+    margin-top: 10px;
 }
 
 textarea {
-    height: 400px;
+    width: 100%;
+    height: 60vh;
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
     resize: none;
 }
 
+/* ACTION BUTTONS */
 .actions {
-    margin-top: 10px;
     display: flex;
     gap: 10px;
+    margin-top: 10px;
 }
 
 .save {
+    flex: 1;
     background: #3b82f6;
     color: white;
-    padding: 10px 15px;
+    padding: 12px;
     border: none;
-    border-radius: 8px;
-    cursor: pointer;
+    border-radius: 10px;
+    font-weight: bold;
 }
 
 .back {
+    flex: 1;
     background: #ef4444;
     color: white;
-    padding: 10px 15px;
+    padding: 12px;
     border: none;
-    border-radius: 8px;
-    cursor: pointer;
+    border-radius: 10px;
+    font-weight: bold;
 }
 </style>
 
@@ -114,7 +137,7 @@ textarea {
 <div id="home">
     <div class="header">
         <h2>🎬 My Scripts</h2>
-        <button class="new-btn" onclick="createNew()">+ New Script</button>
+        <button class="new-btn" onclick="createNew()">+ New</button>
     </div>
 
     <div id="list"></div>
@@ -122,7 +145,7 @@ textarea {
 
 <!-- EDITOR -->
 <div id="editor">
-    <h2>✏️ Edit Script</h2>
+    <h2 style="font-size:18px;">✏️ Script Editor</h2>
 
     <input id="title" placeholder="Script title...">
     <textarea id="content" placeholder="Write your script..."></textarea>
@@ -137,7 +160,6 @@ textarea {
 let scripts = JSON.parse(localStorage.getItem("scripts")) || [];
 let currentId = null;
 
-/* RENDER LIST */
 function renderList() {
     const list = document.getElementById("list");
     list.innerHTML = "";
@@ -147,18 +169,17 @@ function renderList() {
         div.className = "card";
 
         div.innerHTML = `
-            <div onclick="openScript(${i})">
+            <div class="card-content" onclick="openScript(${i})">
                 <b>${s.title || "Untitled Script"}</b>
-                <div class="date">Created: ${s.date}</div>
+                <div class="date">📅 ${s.date}</div>
             </div>
-            <button class="delete-btn" onclick="deleteScript(event, ${i})">Delete</button>
+            <button class="delete-btn" onclick="deleteScript(event, ${i})">🗑</button>
         `;
 
         list.appendChild(div);
     });
 }
 
-/* CREATE NEW */
 function createNew() {
     currentId = null;
     document.getElementById("title").value = "";
@@ -166,7 +187,6 @@ function createNew() {
     showEditor();
 }
 
-/* OPEN */
 function openScript(i) {
     currentId = i;
     document.getElementById("title").value = scripts[i].title;
@@ -174,7 +194,6 @@ function openScript(i) {
     showEditor();
 }
 
-/* SAVE */
 function saveScript() {
     let title = document.getElementById("title").value;
     let content = document.getElementById("content").value;
@@ -191,10 +210,8 @@ function saveScript() {
     goHome();
 }
 
-/* DELETE */
 function deleteScript(event, i) {
-    event.stopPropagation(); // prevent opening script
-
+    event.stopPropagation();
     if (confirm("Delete this script?")) {
         scripts.splice(i, 1);
         localStorage.setItem("scripts", JSON.stringify(scripts));
@@ -202,7 +219,6 @@ function deleteScript(event, i) {
     }
 }
 
-/* NAV */
 function showEditor() {
     document.getElementById("home").style.display = "none";
     document.getElementById("editor").style.display = "block";
