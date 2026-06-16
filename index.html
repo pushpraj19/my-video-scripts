@@ -1,280 +1,788 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Video Script Manager</title>
-    <link rel="apple-touch-icon" href="File_00000000c7b061f88243d4b7886a9f4d.png">
-    <link rel="icon" type="image/png" href="File_00000000c7b061f88243d4b7886a9f4d.png">
-<style>
-body {
-    margin: 0;
-    font-family: Arial;
-    background: #0f172a;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Video Script Manager</title>
+  <link rel="apple-touch-icon" href="File_00000000c7b061f88243d4b7886a9f4d.png">
+  <link rel="icon" type="image/png" href="File_00000000c7b061f88243d4b7886a9f4d.png">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
 
-/* NAVBAR */
-nav {
-    background: #1e293b;
-    padding: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+    :root {
+      --bg: #f5f7fc;
+      --surface: #ffffff;
+      --surface2: #f0f2f8;
+      --text: #1a1e2b;
+      --text2: #3e4457;
+      --border: #d9deeb;
+      --shadow: 0 8px 24px rgba(0, 10, 30, 0.08);
+      --glow: 0 0 0 3px rgba(79, 114, 255, 0.25);
+      --primary: #4f72ff;
+      --primary-glow: 0 0 12px rgba(79, 114, 255, 0.4);
+      --radius: 20px;
+      --radius-sm: 14px;
+      --transition: 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+    }
 
-/* Flexbox wrapper to align logo and text horizontally */
-.nav-title-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
+    body.dark {
+      --bg: #0d111f;
+      --surface: #181e2f;
+      --surface2: #232a3e;
+      --text: #eef2f9;
+      --text2: #b0bbd4;
+      --border: #2f3852;
+      --shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+      --primary: #6b89ff;
+    }
 
-/* Styled logo image */
-.nav-logo {
-    height: 32px; /* Adjust height to fit nicely in the navbar */
-    width: auto;
-    object-fit: contain;
-}
+    body {
+      background: var(--bg);
+      color: var(--text);
+      transition: background 0.3s, color 0.2s;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
 
-nav h1 {
-    font-size: 16px;
-    margin: 0;
-}
+    #app {
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      background: var(--bg);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 40px rgba(0,0,0,0.03);
+      transition: background 0.3s;
+    }
 
-nav button {
-    background: #22c55e;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 8px;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-}
+    /* navbar */
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      background: var(--surface);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      transition: background 0.3s, border 0.3s;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.02);
+    }
 
-/* MAIN */
-main {
-    flex: 1;
-    padding: 12px;
-}
+    .navbar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-/* HOME LIST */
-.card {
-    background: #1e293b;
-    padding: 12px;
-    margin-top: 10px;
-    border-radius: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-}
+    .navbar-logo {
+      height: 34px;
+      width: 34px;
+      object-fit: contain;
+      border-radius: 8px;
+      background: var(--surface2);
+    }
 
-.card-content {
-    flex: 1;
-}
+    .navbar-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+      letter-spacing: -0.3px;
+      color: var(--text);
+    }
 
-.date {
-    font-size: 11px;
-    color: #94a3b8;
-}
+    .navbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-.delete-btn {
-    background: #ef4444;
-    border: none;
-    padding: 6px 10px;
-    border-radius: 8px;
-    color: white;
-    cursor: pointer;
-}
+    .nav-btn {
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      cursor: pointer;
+      color: var(--text2);
+      padding: 6px 8px;
+      border-radius: 30px;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-/* EDITOR */
-#editor {
-    display: none;
-}
+    .nav-btn:active { transform: scale(0.92); }
+    .nav-btn:hover { background: var(--surface2); }
 
-input {
-    width: 100%;
-    padding: 12px;
-    margin-top: 10px;
-    border-radius: 10px;
-    border: none;
-    font-size: 16px;
-    box-sizing: border-box;
-}
+    .create-btn {
+      background: var(--primary);
+      color: white;
+      border-radius: 40px;
+      padding: 6px 16px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      gap: 4px;
+      box-shadow: 0 4px 12px rgba(79, 114, 255, 0.25);
+      transition: 0.25s;
+    }
+    .create-btn:active { transform: scale(0.94); box-shadow: 0 2px 6px rgba(79,114,255,0.3); }
 
-textarea {
-    width: 100%;
-    height: 60vh;
-    margin-top: 10px;
-    padding: 12px;
-    border-radius: 10px;
-    border: none;
-    font-size: 16px;
-    box-sizing: border-box;
-    resize: none;
-}
+    /* views */
+    .view {
+      flex: 1;
+      padding: 18px 16px 30px;
+      display: none;
+      flex-direction: column;
+      animation: slideFade 0.3s ease;
+    }
 
-/* BUTTONS */
-.actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
+    .view.active {
+      display: flex;
+    }
 
-.save {
-    flex: 1;
-    background: #3b82f6;
-    border: none;
-    padding: 12px;
-    border-radius: 10px;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-}
+    @keyframes slideFade {
+      0% { opacity: 0.4; transform: translateX(8px); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
 
-.back {
-    flex: 1;
-    background: #ef4444;
-    border: none;
-    padding: 12px;
-    border-radius: 10px;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-}
+    /* list view */
+    .search-wrap {
+      margin-bottom: 20px;
+    }
 
-/* FOOTER */
-footer {
-    background: #1e293b;
-    text-align: center;
-    padding: 10px;
-    font-size: 12px;
-    color: #94a3b8;
-}
-</style>
+    .search-input {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 60px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 1rem;
+      outline: none;
+      transition: 0.25s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
 
+    .search-input:focus {
+      border-color: var(--primary);
+      box-shadow: var(--glow), 0 4px 12px rgba(79,114,255,0.08);
+    }
+
+    .script-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      flex: 1;
+    }
+
+    .script-card {
+      background: var(--surface);
+      border-radius: var(--radius-sm);
+      padding: 16px 18px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      transition: 0.25s;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      touch-action: manipulation;
+    }
+
+    .script-card:active { transform: scale(0.98); background: var(--surface2); }
+
+    .card-left {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .card-title {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .card-preview {
+      font-size: 0.85rem;
+      color: var(--text2);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 90%;
+    }
+
+    .card-icons {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .pin-badge, .fav-badge {
+      font-size: 1rem;
+      opacity: 0.7;
+    }
+
+    .empty-state {
+      text-align: center;
+      margin-top: 60px;
+      color: var(--text2);
+      font-size: 1rem;
+      opacity: 0.8;
+    }
+
+    /* bottom menu (long press) */
+    .menu-overlay {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0,0,0,0.25);
+      backdrop-filter: blur(3px);
+      z-index: 100;
+      display: none;
+      justify-content: center;
+      align-items: flex-end;
+      animation: fadeIn 0.25s;
+    }
+
+    .menu-overlay.open {
+      display: flex;
+    }
+
+    .menu-sheet {
+      background: var(--surface);
+      width: 100%;
+      max-width: 480px;
+      border-radius: 28px 28px 0 0;
+      padding: 20px 20px 30px;
+      box-shadow: 0 -8px 40px rgba(0,0,0,0.12);
+      animation: slideUp 0.3s ease;
+      border-top: 1px solid var(--border);
+    }
+
+    @keyframes slideUp {
+      0% { transform: translateY(100%); }
+      100% { transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    .menu-item {
+      padding: 16px 10px;
+      font-size: 1.05rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      color: var(--text);
+      transition: 0.15s;
+      cursor: pointer;
+      border-radius: 12px;
+    }
+
+    .menu-item:active { background: var(--surface2); transform: scale(0.97); }
+    .menu-item.danger { color: #e64a4a; }
+
+    /* editor view - like a clean writing pad */
+    .editor-view {
+      padding: 0 16px 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+    }
+
+    .editor-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 0 10px;
+      background: var(--bg);
+    }
+
+    .back-btn {
+      background: none;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: var(--text);
+      padding: 0 4px;
+      transition: 0.2s;
+    }
+    .back-btn:active { transform: scale(0.85); }
+
+    .editor-title-input {
+      font-size: 1.3rem;
+      font-weight: 600;
+      border: none;
+      background: transparent;
+      color: var(--text);
+      flex: 1;
+      outline: none;
+      padding: 6px 0;
+      border-bottom: 2px solid transparent;
+      transition: 0.25s;
+    }
+
+    .editor-title-input:focus {
+      border-bottom-color: var(--primary);
+      box-shadow: 0 2px 0 var(--primary);
+    }
+
+    /* writing area: clean, no box, just like a notepad */
+    .editor-body {
+      flex: 1;
+      margin-top: 6px;
+      background: var(--bg);
+    }
+
+    .editor-textarea {
+      width: 100%;
+      height: 100%;
+      min-height: 340px;
+      border: none;
+      background: transparent;
+      color: var(--text);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      padding: 8px 2px;
+      resize: none;
+      outline: none;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      letter-spacing: 0.01em;
+    }
+
+    .editor-textarea::placeholder {
+      color: var(--text2);
+      opacity: 0.5;
+    }
+
+    .editor-actions {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 14px 0 8px;
+      gap: 12px;
+      background: var(--bg);
+    }
+
+    .save-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 26px;
+      border-radius: 60px;
+      font-weight: 500;
+      font-size: 0.95rem;
+      box-shadow: 0 6px 18px rgba(79,114,255,0.2);
+      transition: 0.25s;
+      cursor: pointer;
+    }
+
+    .save-btn:active { transform: scale(0.94); }
+    .save-feedback {
+      font-size: 0.9rem;
+      color: var(--text2);
+      opacity: 0;
+      transition: 0.2s;
+    }
+    .save-feedback.show { opacity: 1; }
+
+    /* delete animation */
+    .card-delete {
+      animation: deletePop 0.3s forwards;
+    }
+
+    @keyframes deletePop {
+      0% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(0.8); height: 0; margin: 0; padding: 0; }
+    }
+
+    /* utils */
+    .hidden { display: none; }
+  </style>
 </head>
 <body>
-
-<nav>
-    <div class="nav-title-container">
-        <img src="File_00000000c7b061f88243d4b7886a9f4d.png" alt="Logo" class="nav-logo">
-        <h1>Script Manager</h1>
+<div id="app">
+  <!-- navbar -->
+  <nav class="navbar">
+    <div class="navbar-left">
+      <img src="File_00000000c7b061f88243d4b7886a9f4d.png" alt="logo" class="navbar-logo">
+      <span class="navbar-title">Script Manager</span>
     </div>
-    <button onclick="createNew()">+ New</button>
-</nav>
-
-<main>
-
-<div id="home">
-    <h3>My Scripts</h3>
-    <div id="list"></div>
-</div>
-
-<div id="editor">
-    <h3>✏️ Editor</h3>
-
-    <input id="title" placeholder="Script title...">
-    <textarea id="content" placeholder="Write your script..."></textarea>
-
-    <div class="actions">
-        <button class="save" onclick="saveScript()">Save</button>
-        <button class="back" onclick="goHome()">Back</button>
+    <div class="navbar-actions">
+      <button class="nav-btn create-btn" id="createBtn">+ New</button>
+      <button class="nav-btn" id="themeToggle">🌙</button>
     </div>
+  </nav>
+
+  <!-- LIST VIEW -->
+  <div id="listView" class="view active">
+    <div class="search-wrap">
+      <input type="text" class="search-input" id="searchInput" placeholder="Search scripts...">
+    </div>
+    <div class="script-list" id="scriptList">
+      <div class="empty-state">✨ No scripts yet. Tap + to create.</div>
+    </div>
+  </div>
+
+  <!-- EDITOR VIEW (full screen, clean writing) -->
+  <div id="editorView" class="view">
+    <div class="editor-view">
+      <div class="editor-header">
+        <button class="back-btn" id="backBtn">‹</button>
+        <input type="text" class="editor-title-input" id="editorTitle" placeholder="Script title..." value="">
+      </div>
+      <div class="editor-body">
+        <textarea class="editor-textarea" id="editorContent" placeholder="Start writing your script..."></textarea>
+      </div>
+      <div class="editor-actions">
+        <span class="save-feedback" id="saveFeedback">✓ Saved</span>
+        <button class="save-btn" id="manualSaveBtn">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM MENU (long press) -->
+  <div class="menu-overlay" id="menuOverlay">
+    <div class="menu-sheet" id="menuSheet">
+      <div class="menu-item" id="menuEdit">✎ Edit</div>
+      <div class="menu-item" id="menuPin">📌 Pin</div>
+      <div class="menu-item" id="menuFav">❤️ Favorite</div>
+      <div class="menu-item danger" id="menuDelete">🗑 Delete</div>
+      <div class="menu-item" style="border-bottom: none; justify-content:center; color:var(--text2);" id="menuClose">Cancel</div>
+    </div>
+  </div>
 </div>
-
-</main>
-
-<footer>
-    Made for your video scripts 🎬 | Saved in browser storage
-</footer>
 
 <script>
-let scripts = JSON.parse(localStorage.getItem("scripts")) || [];
-let currentId = null;
+  (function(){
+    // ----- state -----
+    let scripts = [];
+    let currentId = null;
+    let menuTargetId = null;
+    let saveTimeout = null;
+    let isDark = false;
 
-/* RENDER */
-function renderList() {
-    const list = document.getElementById("list");
-    list.innerHTML = "";
+    const STORAGE_KEY = 'vsm_scripts';
 
-    scripts.forEach((s, i) => {
-        let div = document.createElement("div");
-        div.className = "card";
+    // DOM refs
+    const listView = document.getElementById('listView');
+    const editorView = document.getElementById('editorView');
+    const scriptListEl = document.getElementById('scriptList');
+    const searchInput = document.getElementById('searchInput');
+    const createBtn = document.getElementById('createBtn');
+    const backBtn = document.getElementById('backBtn');
+    const editorTitle = document.getElementById('editorTitle');
+    const editorContent = document.getElementById('editorContent');
+    const manualSaveBtn = document.getElementById('manualSaveBtn');
+    const saveFeedback = document.getElementById('saveFeedback');
+    const themeToggle = document.getElementById('themeToggle');
+    const menuOverlay = document.getElementById('menuOverlay');
 
-        div.innerHTML = `
-            <div class="card-content" onclick="openScript(${i})">
-                <b>${s.title || "Untitled Script"}</b>
-                <div class="date">📅 ${s.date}</div>
+    const menuEdit = document.getElementById('menuEdit');
+    const menuPin = document.getElementById('menuPin');
+    const menuFav = document.getElementById('menuFav');
+    const menuDelete = document.getElementById('menuDelete');
+    const menuClose = document.getElementById('menuClose');
+
+    // ----- helpers -----
+    function loadScripts() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          scripts = JSON.parse(raw);
+          scripts = scripts.filter(s => s && typeof s === 'object');
+          scripts.forEach(s => {
+            if (!s.id) s.id = 'scr_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
+            if (!s.title) s.title = 'Untitled';
+            if (s.content === undefined) s.content = '';
+            if (s.pinned === undefined) s.pinned = false;
+            if (s.favorite === undefined) s.favorite = false;
+            if (!s.lastEdited) s.lastEdited = new Date().toISOString();
+          });
+        } else {
+          scripts = [];
+        }
+      } catch (_) { scripts = []; }
+      sortScripts();
+    }
+
+    function sortScripts() {
+      scripts.sort((a,b) => {
+        if (a.pinned && !b.pinned) return -1;
+        if (!a.pinned && b.pinned) return 1;
+        return new Date(b.lastEdited) - new Date(a.lastEdited);
+      });
+    }
+
+    function saveScripts() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(scripts));
+      sortScripts();
+    }
+
+    function generateId() { return 'scr_' + Date.now() + '_' + Math.random().toString(36).slice(2,8); }
+
+    // ----- render list -----
+    function renderList(filter = '') {
+      const q = filter.trim().toLowerCase();
+      let filtered = scripts;
+      if (q) {
+        filtered = scripts.filter(s => s.title.toLowerCase().includes(q) || s.content.toLowerCase().includes(q));
+      }
+      if (filtered.length === 0) {
+        scriptListEl.innerHTML = `<div class="empty-state">${q ? 'No matches' : '✨ No scripts. Tap + to create.'}</div>`;
+        return;
+      }
+      let html = '';
+      filtered.forEach(script => {
+        const preview = (script.content || '').slice(0, 70).replace(/\n/g, ' ') || 'No content';
+        const pinIcon = script.pinned ? '📌' : '';
+        const favIcon = script.favorite ? '❤️' : '';
+        html += `
+          <div class="script-card" data-id="${script.id}">
+            <div class="card-left">
+              <div class="card-title">${escHtml(script.title)} ${pinIcon ? `<span class="pin-badge">${pinIcon}</span>` : ''}</div>
+              <div class="card-preview">${escHtml(preview)}</div>
             </div>
-            <button class="delete-btn" onclick="deleteScript(event, ${i})">🗑</button>
+            <div class="card-icons">
+              ${favIcon ? `<span class="fav-badge">${favIcon}</span>` : ''}
+            </div>
+          </div>
         `;
+      });
+      scriptListEl.innerHTML = html;
+      // attach click & longpress
+      document.querySelectorAll('.script-card').forEach(card => {
+        const id = card.dataset.id;
+        card.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openEditor(id);
+        });
+        let timer = null;
+        card.addEventListener('pointerdown', (e) => {
+          timer = setTimeout(() => {
+            openMenu(id);
+          }, 550);
+        });
+        card.addEventListener('pointerup', () => { clearTimeout(timer); });
+        card.addEventListener('pointerleave', () => { clearTimeout(timer); });
+        card.addEventListener('touchmove', () => { clearTimeout(timer); });
+      });
+    }
 
-        list.appendChild(div);
+    function escHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // ----- open editor -----
+    function openEditor(id) {
+      const script = scripts.find(s => s.id === id);
+      if (!script) return;
+      currentId = id;
+      editorTitle.value = script.title || '';
+      editorContent.value = script.content || '';
+      listView.classList.remove('active');
+      editorView.classList.add('active');
+      editorContent.focus();
+      saveFeedback.classList.remove('show');
+      if (saveTimeout) clearTimeout(saveTimeout);
+    }
+
+    // ----- close editor (save) -----
+    function closeEditor() {
+      if (currentId) {
+        const script = scripts.find(s => s.id === currentId);
+        if (script) {
+          script.title = editorTitle.value.trim() || 'Untitled';
+          script.content = editorContent.value;
+          script.lastEdited = new Date().toISOString();
+          saveScripts();
+        }
+        currentId = null;
+      }
+      editorView.classList.remove('active');
+      listView.classList.add('active');
+      renderList(searchInput.value);
+    }
+
+    // ----- auto save (debounce) -----
+    function autoSave() {
+      if (!currentId) return;
+      const script = scripts.find(s => s.id === currentId);
+      if (!script) return;
+      script.title = editorTitle.value.trim() || 'Untitled';
+      script.content = editorContent.value;
+      script.lastEdited = new Date().toISOString();
+      saveScripts();
+      saveFeedback.textContent = '✓ Saved';
+      saveFeedback.classList.add('show');
+      setTimeout(() => saveFeedback.classList.remove('show'), 1800);
+    }
+
+    function manualSave() {
+      if (!currentId) return;
+      const script = scripts.find(s => s.id === currentId);
+      if (!script) return;
+      script.title = editorTitle.value.trim() || 'Untitled';
+      script.content = editorContent.value;
+      script.lastEdited = new Date().toISOString();
+      saveScripts();
+      saveFeedback.textContent = '✓ Saved';
+      saveFeedback.classList.add('show');
+      setTimeout(() => saveFeedback.classList.remove('show'), 1500);
+    }
+
+    // ----- menu -----
+    function openMenu(id) {
+      menuTargetId = id;
+      const script = scripts.find(s => s.id === id);
+      if (!script) return;
+      menuPin.textContent = script.pinned ? '📌 Unpin' : '📌 Pin';
+      menuFav.textContent = script.favorite ? '❤️ Unfavorite' : '❤️ Favorite';
+      menuOverlay.classList.add('open');
+    }
+
+    function closeMenu() {
+      menuOverlay.classList.remove('open');
+      menuTargetId = null;
+    }
+
+    function handleMenuAction(action) {
+      if (!menuTargetId) return;
+      const script = scripts.find(s => s.id === menuTargetId);
+      if (!script) { closeMenu(); return; }
+
+      if (action === 'edit') {
+        closeMenu();
+        openEditor(menuTargetId);
+        return;
+      }
+      if (action === 'pin') {
+        script.pinned = !script.pinned;
+        saveScripts();
+        renderList(searchInput.value);
+        closeMenu();
+        return;
+      }
+      if (action === 'fav') {
+        script.favorite = !script.favorite;
+        saveScripts();
+        renderList(searchInput.value);
+        closeMenu();
+        return;
+      }
+      if (action === 'delete') {
+        const idToDelete = menuTargetId;
+        const card = document.querySelector(`.script-card[data-id="${idToDelete}"]`);
+        if (card) {
+          card.classList.add('card-delete');
+          setTimeout(() => {
+            scripts = scripts.filter(s => s.id !== idToDelete);
+            saveScripts();
+            renderList(searchInput.value);
+          }, 280);
+        } else {
+          scripts = scripts.filter(s => s.id !== idToDelete);
+          saveScripts();
+          renderList(searchInput.value);
+        }
+        closeMenu();
+        return;
+      }
+      closeMenu();
+    }
+
+ function createScript() {
+      const newScript = {
+        id: generateId(),
+        title: 'New Script',
+        content: '',
+        pinned: false,
+        favorite: false,
+        lastEdited: new Date().toISOString()
+      };
+      scripts.push(newScript);
+      saveScripts();
+      renderList(searchInput.value);
+      openEditor(newScript.id);
+    }
+
+    function toggleTheme() {
+      isDark = !isDark;
+      document.body.classList.toggle('dark', isDark);
+      themeToggle.textContent = isDark ? '☀️' : '🌙';
+    }
+
+    // ----- init -----
+    loadScripts();
+    renderList('');
+
+    searchInput.addEventListener('input', (e) => renderList(e.target.value));
+    createBtn.addEventListener('click', createScript);
+    backBtn.addEventListener('click', closeEditor);
+
+    window.addEventListener('beforeunload', () => {
+      if (currentId) {
+        const script = scripts.find(s => s.id === currentId);
+        if (script) {
+          script.title = editorTitle.value.trim() || 'Untitled';
+          script.content = editorContent.value;
+          script.lastEdited = new Date().toISOString();
+          saveScripts();
+        }
+      }
     });
-}
 
-/* NEW */
-function createNew() {
-    currentId = null;
-    document.getElementById("title").value = "";
-    document.getElementById("content").value = "";
-    showEditor();
-}
+    editorContent.addEventListener('input', () => {
+      if (saveTimeout) clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(() => {
+        autoSave();
+        saveTimeout = null;
+      }, 1500);
+    });
+    editorTitle.addEventListener('input', () => {
+      if (saveTimeout) clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(() => {
+        autoSave();
+        saveTimeout = null;
+      }, 1500);
+    });
 
-/* OPEN */
-function openScript(i) {
-    currentId = i;
-    document.getElementById("title").value = scripts[i].title;
-    document.getElementById("content").value = scripts[i].content;
-    showEditor();
-}
+    manualSaveBtn.addEventListener('click', manualSave);
+    themeToggle.addEventListener('click', toggleTheme);
 
-/* SAVE */
-function saveScript() {
-    let title = document.getElementById("title").value;
-    let content = document.getElementById("content").value;
-    let now = new Date().toLocaleString();
+    menuClose.addEventListener('click', closeMenu);
+    menuOverlay.addEventListener('click', (e) => {
+      if (e.target === menuOverlay) closeMenu();
+    });
+    menuEdit.addEventListener('click', () => handleMenuAction('edit'));
+    menuPin.addEventListener('click', () => handleMenuAction('pin'));
+    menuFav.addEventListener('click', () => handleMenuAction('fav'));
+    menuDelete.addEventListener('click', () => handleMenuAction('delete'));
 
-    if (currentId === null) {
-        scripts.push({ title, content, date: now });
-    } else {
-        scripts[currentId].title = title;
-        scripts[currentId].content = content;
-    }
-
-    localStorage.setItem("scripts", JSON.stringify(scripts));
-    goHome();
-}
-
-/* DELETE */
-function deleteScript(event, i) {
-    event.stopPropagation();
-    if (confirm("Delete this script?")) {
-        scripts.splice(i, 1);
-        localStorage.setItem("scripts", JSON.stringify(scripts));
-        renderList();
-    }
-}
-
-/* NAV */
-function showEditor() {
-    document.getElementById("home").style.display = "none";
-    document.getElementById("editor").style.display = "block";
-}
-
-function goHome() {
-    document.getElementById("home").style.display = "block";
-    document.getElementById("editor").style.display = "none";
-    renderList();
-}
-
-renderList();
+    document.body.classList.remove('dark');
+    themeToggle.textContent = '🌙';
+  })();
 </script>
-
 </body>
 </html>
