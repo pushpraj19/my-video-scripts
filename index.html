@@ -11,84 +11,80 @@ body {
     font-family: Arial;
     background: #0f172a;
     color: white;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
-/* HOME */
-#home {
+/* NAVBAR */
+nav {
+    background: #1e293b;
     padding: 12px;
-}
-
-.header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 10px;
 }
 
-h2 {
-    font-size: 18px;
+nav h1 {
+    font-size: 16px;
     margin: 0;
 }
 
-.new-btn {
+nav button {
     background: #22c55e;
-    color: white;
-    padding: 10px;
     border: none;
-    border-radius: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: white;
     font-weight: bold;
-    font-size: 14px;
 }
 
-/* SCRIPT CARDS */
+/* MAIN */
+main {
+    flex: 1;
+    padding: 12px;
+}
+
+/* HOME LIST */
 .card {
     background: #1e293b;
     padding: 12px;
     margin-top: 10px;
-    border-radius: 12px;
+    border-radius: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 10px;
 }
 
 .card-content {
     flex: 1;
 }
 
-.card:hover {
-    background: #334155;
-}
-
 .date {
     font-size: 11px;
     color: #94a3b8;
-    margin-top: 3px;
 }
 
-/* DELETE */
 .delete-btn {
     background: #ef4444;
-    color: white;
     border: none;
-    padding: 8px 10px;
+    padding: 6px 10px;
     border-radius: 8px;
-    font-size: 12px;
+    color: white;
 }
 
 /* EDITOR */
 #editor {
     display: none;
-    padding: 12px;
 }
 
 input {
     width: 100%;
     padding: 12px;
+    margin-top: 10px;
     border-radius: 10px;
     border: none;
     font-size: 16px;
-    margin-top: 10px;
 }
 
 textarea {
@@ -99,10 +95,9 @@ textarea {
     border-radius: 10px;
     border: none;
     font-size: 16px;
-    resize: none;
 }
 
-/* ACTION BUTTONS */
+/* BUTTONS */
 .actions {
     display: flex;
     gap: 10px;
@@ -112,40 +107,54 @@ textarea {
 .save {
     flex: 1;
     background: #3b82f6;
-    color: white;
-    padding: 12px;
     border: none;
+    padding: 12px;
     border-radius: 10px;
+    color: white;
     font-weight: bold;
 }
 
 .back {
     flex: 1;
     background: #ef4444;
-    color: white;
-    padding: 12px;
     border: none;
+    padding: 12px;
     border-radius: 10px;
+    color: white;
     font-weight: bold;
+}
+
+/* FOOTER */
+footer {
+    background: #1e293b;
+    text-align: center;
+    padding: 10px;
+    font-size: 12px;
+    color: #94a3b8;
 }
 </style>
 
 </head>
 <body>
 
+<!-- NAVBAR -->
+<nav>
+    <h1>🎬 Script Manager</h1>
+    <button onclick="createNew()">+ New</button>
+</nav>
+
+<!-- MAIN -->
+<main>
+
 <!-- HOME -->
 <div id="home">
-    <div class="header">
-        <h2>🎬 My Scripts</h2>
-        <button class="new-btn" onclick="createNew()">+ New</button>
-    </div>
-
+    <h3>My Scripts</h3>
     <div id="list"></div>
 </div>
 
 <!-- EDITOR -->
 <div id="editor">
-    <h2 style="font-size:18px;">✏️ Script Editor</h2>
+    <h3>✏️ Editor</h3>
 
     <input id="title" placeholder="Script title...">
     <textarea id="content" placeholder="Write your script..."></textarea>
@@ -156,10 +165,18 @@ textarea {
     </div>
 </div>
 
+</main>
+
+<!-- FOOTER -->
+<footer>
+    Made for your video scripts 🎬 | Saved in browser storage
+</footer>
+
 <script>
 let scripts = JSON.parse(localStorage.getItem("scripts")) || [];
 let currentId = null;
 
+/* RENDER */
 function renderList() {
     const list = document.getElementById("list");
     list.innerHTML = "";
@@ -180,6 +197,7 @@ function renderList() {
     });
 }
 
+/* NEW */
 function createNew() {
     currentId = null;
     document.getElementById("title").value = "";
@@ -187,6 +205,7 @@ function createNew() {
     showEditor();
 }
 
+/* OPEN */
 function openScript(i) {
     currentId = i;
     document.getElementById("title").value = scripts[i].title;
@@ -194,6 +213,7 @@ function openScript(i) {
     showEditor();
 }
 
+/* SAVE */
 function saveScript() {
     let title = document.getElementById("title").value;
     let content = document.getElementById("content").value;
@@ -210,6 +230,7 @@ function saveScript() {
     goHome();
 }
 
+/* DELETE */
 function deleteScript(event, i) {
     event.stopPropagation();
     if (confirm("Delete this script?")) {
@@ -219,6 +240,7 @@ function deleteScript(event, i) {
     }
 }
 
+/* NAV */
 function showEditor() {
     document.getElementById("home").style.display = "none";
     document.getElementById("editor").style.display = "block";
