@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Video Script Manager</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #0f172a;
+    color: white;
+}
+
+/* HOME */
+#home {
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.new-btn {
+    background: #22c55e;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.card {
+    background: #1e293b;
+    padding: 15px;
+    margin-top: 10px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card:hover {
+    background: #334155;
+}
+
+.date {
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+/* DELETE BUTTON */
+.delete-btn {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* EDITOR */
+#editor {
+    display: none;
+    padding: 20px;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    font-size: 16px;
+}
+
+textarea {
+    height: 400px;
+    resize: none;
+}
+
+.actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.save {
+    background: #3b82f6;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.back {
+    background: #ef4444;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+</style>
+
+</head>
+<body>
+
+<!-- HOME -->
+<div id="home">
+    <div class="header">
+        <h2>🎬 My Scripts</h2>
+        <button class="new-btn" onclick="createNew()">+ New Script</button>
+    </div>
+
+    <div id="list"></div>
+</div>
+
+<!-- EDITOR -->
+<div id="editor">
+    <h2>✏️ Edit Script</h2>
+
+    <input id="title" placeholder="Script title...">
+    <textarea id="content" placeholder="Write your script..."></textarea>
+
+    <div class="actions">
+        <button class="save" onclick="saveScript()">Save</button>
+        <button class="back" onclick="goHome()">Back</button>
+    </div>
+</div>
+
+<script>
+let scripts = JSON.parse(localStorage.getItem("scripts")) || [];
+let currentId = null;
+
+/* RENDER LIST */
+function renderList() {
+    const list = document.getElementById("list");
+    list.innerHTML = "";
+
+    scripts.forEach((s, i) => {
+        let div = document.createElement("div");
+        div.className = "card";
+
+        div.innerHTML = `
+            <div onclick="openScript(${i})">
+                <b>${s.title || "Untitled Script"}</b>
+                <div class="date">Created: ${s.date}</div>
+            </div>
+            <button class="delete-btn" onclick="deleteScript(event, ${i})">Delete</button>
+        `;
+
+        list.appendChild(div);
+    });
+}
+
+/* CREATE NEW */
+function createNew() {
+    currentId = null;
+    document.getElementById("title").value = "";
+    document.getElementById("content").value = "";
+    showEditor();
+}
+
+/* OPEN */
+function openScript(i) {
+    currentId = i;
+    document.getElementById("title").value = scripts[i].title;
+    document.getElementById("content").value = scripts[i].content;
+    showEditor();
+}
+
+/* SAVE */
+function saveScript() {
+    let title = document.getElementById("title").value;
+    let content = document.getElementById("content").value;
+    let now = new Date().toLocaleString();
+
+    if (currentId === null) {
+        scripts.push({ title, content, date: now });
+    } else {
+        scripts[currentId].title = title;
+        scripts[currentId].content = content;
+    }
+
+    localStorage.setItem("scripts", JSON.stringify(scripts));
+    goHome();
+}
+
+/* DELETE */
+function deleteScript(event, i) {
+    event.stopPropagation(); // prevent opening script
+
+    if (confirm("Delete this script?")) {
+        scripts.splice(i, 1);
+        localStorage.setItem("scripts", JSON.stringify(scripts));
+        renderList();
+    }
+}
+
+/* NAV */
+function showEditor() {
+    document.getElementById("home").style.display = "none";
+    document.getElementById("editor").style.display = "block";
+}
+
+function goHome() {
+    document.getElementById("home").style.display = "block";
+    document.getElementById("editor").style.display = "none";
+    renderList();
+}
+
+renderList();
+</script>
+
+</body>
+</html>
