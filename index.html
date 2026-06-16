@@ -821,12 +821,11 @@
       }
       closeMenu();
     }
-menuOverlay.addEventListener('click', (e) => {
+    menuOverlay.addEventListener('click', (e) => {
   if (e.target === menuOverlay) {
     closeMenu();
   }
-});
-    function createScript() {
+function createScript() {
       const newScript = {
         id: generateId(),
         title: 'New Script',
